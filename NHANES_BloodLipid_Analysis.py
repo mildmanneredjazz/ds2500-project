@@ -1,5 +1,4 @@
 #NOTES FOR LATER:
-#test
 #Replace nutrient deficiency rates by poverty bar chart nutrients w/ clinically relevant & correlated variables
 import matplotlib.pyplot as plt
 import pandas as pd
