@@ -16,9 +16,9 @@ sns.set_theme()
 # LOAD/MERGE DATA
 
 # Load datasets
-demographics_df = pd.read_sas('DEMO_L.xpt')
-dietary_df = pd.read_sas('DR1TOT_L.xpt')
-cholesterol_df = pd.read_sas('TRIGLY_L.xpt')
+demographics_df = pd.read_sas('NHANES_data/DEMO_L.xpt')
+dietary_df = pd.read_sas('NHANES_data/DR1TOT_L.xpt')
+cholesterol_df = pd.read_sas('NHANES_data/TRIGLY_L.xpt')
 
 # Merge
 df = demographics_df.merge(
@@ -110,7 +110,7 @@ df = df.dropna(subset = ['RIDAGEYR', 'RIAGENDR', 'RIDRETH3'], how = 'any')
 # ax.grid(axis='y', alpha=0.3)
 
 # plt.tight_layout()
-# plt.savefig('LDL_ranges_by_race.png', dpi=300, bbox_inches='tight')
+# plt.savefig('Visualizations/LDL_ranges_by_race.png', dpi=300, bbox_inches='tight')
 # plt.show()
 
 # ============================================================================
@@ -165,7 +165,7 @@ ax.legend(title = 'Poverty Category')
 ax.grid(axis = 'y', alpha = 0.3)
 
 plt.tight_layout()
-plt.savefig('nutrient_deficiency_by_poverty.png', dpi = 300, bbox_inches = 'tight')
+plt.savefig('Visualizations/nutrient_deficiency_by_poverty.png', dpi = 300, bbox_inches = 'tight')
 plt.show()
 
 # ============================================================================
@@ -202,7 +202,7 @@ axes[1].set_ylabel('Race', fontsize = 11, fontweight = 'bold')
 
 fig.suptitle('LDL and Triglyceride Levels by Race and Poverty', fontsize = 15, fontweight = 'bold', y = 0.98)
 plt.tight_layout()
-plt.savefig('ldl_triglyceride_heatmaps.png', dpi = 300, bbox_inches = 'tight')
+plt.savefig('Visualizations/ldl_triglyceride_heatmaps.png', dpi = 300, bbox_inches = 'tight')
 plt.show()
 
 # ============================================================================
@@ -235,7 +235,7 @@ ax.axvline(x = 0, color = 'black', linestyle = '-', linewidth = 1)
 ax.grid(axis = 'x', alpha = 0.3)
 
 plt.tight_layout()
-plt.savefig('correlation_bar_chart_LDL.png', dpi = 300, bbox_inches = 'tight')
+plt.savefig('Visualizations/correlation_bar_chart_LDL.png', dpi = 300, bbox_inches = 'tight')
 plt.show()
 
 print("Visualizations saved")
