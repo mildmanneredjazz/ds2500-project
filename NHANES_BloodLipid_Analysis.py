@@ -1,6 +1,6 @@
 #NOTES FOR LATER:
 #Replace nutrient deficiency rates by poverty bar chart nutrients w/ clinically relevant & correlated variables
-#Make all code run from main()
+#TODO: replace VC and VD with sugar, focus on poverty & nutrition/obesity
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -30,7 +30,6 @@ df['Race'] = df['RIDRETH3'].map(race_mapping)
 # CLEAN
 # ============================================================================
 
-df = df.drop_duplicates(subset='SEQN')
 
 for col in ['INDFMPIR', 'DR1TKCAL', 'DR1TPROT', 'DR1TCARB', 'DR1TSUGR',
             'DR1TFIBE', 'DR1TTFAT', 'DR1TSFAT', 'LBDLDLN', 'LBXTLG']:
