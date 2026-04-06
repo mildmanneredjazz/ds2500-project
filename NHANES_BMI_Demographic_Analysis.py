@@ -187,7 +187,7 @@ def plot_obesity_rate_by_race(df):
 
     fig, ax = plt.subplots(figsize = (10, 6))
     ax.barh(race_order, obesity_by_race.values, alpha = 0.8, edgecolor = 'black', linewidth = 0.5)
-    ax.axvline(x = obesity_by_race.mean(), color = 'black', linewidth = 2, linestyle = '--', label = f'Average ({obesity_by_race.mean():.1f}%)')
+    ax.axvline(x = obesity_by_race.mean(), color = 'black', linestyle = '--', label = f'Average ({obesity_by_race.mean():.1f}%)')
     ax.set_xlabel('Obesity Rate (%)', fontweight = 'bold')
     ax.set_title('Obesity Rate by Race', fontweight = 'bold')
     ax.legend(fontsize = 9)
@@ -231,14 +231,14 @@ def plot_nutrient_intake_by_race(df):
     titles     = ['Average Calorie Intake', 'Average Fiber Intake', 'Average Sugar Intake', 'Average Saturated Fat Intake']
     xlabels    = ['Calories (kcal)', 'Fiber (g)', 'Sugar (g)', 'Saturated Fat (g)']
     guidelines = [2000, 25, 50, 20]
-    colors     = ['#49cce3', '#66c94b', '#de5568', '#ffa277']
+    colors     = ["#b8e4ff", "#7080fa", "#563cc6", "#27003F"]
 
     fig, axes = plt.subplots(2, 2, figsize = (18, 12))
 
     for ax, nutrient, title, xlabel, guideline, color in zip(axes.flatten(), nutrients, titles, xlabels, guidelines, colors):
         means = df.groupby('Race')[nutrient].mean().reindex(race_order)
-        ax.barh(race_order, means.values, color = color, alpha = 0.8, edgecolor = 'black', linewidth = 0.5)
-        ax.axvline(x = guideline, color = 'black', linewidth = 2, linestyle = '--', label = f'Guideline ({guideline})')
+        ax.barh(race_order, means.values, color = color, alpha = 0.8, linewidth = 0.5)
+        ax.axvline(x = guideline, color = 'black', linestyle = '--', label = f'Guideline ({guideline})')
         ax.set_xlabel(xlabel, fontweight = 'bold')
         ax.set_title(title, fontweight = 'bold')
         ax.legend(fontsize = 9)
@@ -258,8 +258,8 @@ def plot_bmi_by_calorie_quartile_and_race(df):
     pivot = df.groupby(['Race', 'Calorie_Quartile'], observed = True)['BMXBMI'].mean().unstack()
     
     fig, ax = plt.subplots(figsize = (12, 6))
-    pivot.plot(kind = 'bar', ax = ax, colormap = 'coolwarm', alpha = 0.8, edgecolor = 'black', linewidth=0.5)
-    ax.axhline(y = 30, color = 'black', linewidth=2, linestyle = '--', label = 'Obesity threshold')
+    pivot.plot(kind = 'bar', ax = ax, colormap = 'coolwarm', alpha = 0.8, edgecolor = 'black', linewidth = 0.5)
+    ax.axhline(y = 30, color = 'black', linestyle = '--', label = 'Obesity threshold')
     ax.set_xlabel('Race', fontweight = 'bold')
     ax.set_ylabel('Mean BMI', fontweight = 'bold')
     ax.set_title('Mean BMI by Race and Calorie Intake Quartile', fontweight = 'bold')
