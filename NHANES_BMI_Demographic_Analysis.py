@@ -1,6 +1,6 @@
 #NOTES FOR LATER:
 #Replace nutrient deficiency rates by poverty bar chart nutrients w/ clinically relevant & correlated variables
-#TODO: focus on race & nutrition/obesity, explore blood pressure?
+#TODO: focus on race & nutrition/obesity, explore blood pressure?, use K-Means clustering, linear regression
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -151,58 +151,6 @@ def plot_correlation_bar(df):
     plt.savefig('ds2500-project/Visualizations/correlation_bar_chart_LDL.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
 
-# ============================================================================
-# PLOT 4: LINEAR REGRESSION SCATTER GRID
-# ============================================================================
-
-def plot_regression_scatter(df):
-    female_df = df[df['RIAGENDR'] == 2]
-
-    datasets = [
-        (female_df, 'RIAGENDR', 'LBXTLG', 'Female Baseline vs Triglycerides'),
-        (df, 'INDFMPIR', 'LBXTLG', 'Poverty Ratio vs Triglycerides'),
-        (female_df, 'RIAGENDR', 'LBDLDLN', 'Female Baseline vs LDL'),
-        (df, 'INDFMPIR', 'LBDLDLN', 'Poverty Ratio vs LDL'),
-    ]
-
-    fig, axes = plt.subplots(2, 2, figsize = (14, 10))
-    for ax, (data, x_col, y_col, title) in zip(axes.flatten(), datasets):
-        plot_df = data[[x_col, y_col]].dropna()
-        X, y = plot_df[x_col].values, plot_df[y_col].values
-        m, b = np.polyfit(X, y, 1)
-        ax.scatter(X, y, alpha = 0.2, s = 5, color = '#49cce3')
-        ax.plot(np.linspace(X.min(), X.max(), 100), 
-                m * np.linspace(X.min(), X.max(), 100) + b, color = '#de5568', linewidth=2)
-        ax.set_title(f'{title}\nR² = {r2_score(y, m * X + b):.3f}')
-        ax.set_xlabel(x_col)
-        ax.set_ylabel(y_col)
-
-    plt.suptitle('Linear Regression: Gender & Poverty vs Cholesterol', fontsize = 14, fontweight = 'bold')
-    plt.tight_layout()
-    plt.savefig('ds2500-project/Visualizations/regression_grid.png', dpi = 300, bbox_inches = 'tight')
-    plt.show()
-
-# ============================================================================
-# REGRESSION SUMMARY
-# ============================================================================
-
-def regression_summary(df):
-    features = ['RIDAGEYR', 'RIAGENDR', 'INDFMPIR', 'DR1TSFAT', 'DR1TFIBE', 'DR1TSUGR', 'DR1TTFAT']
-
-    for target, name in [('LBXTLG', 'Triglycerides'), ('LBDLDLN', 'LDL')]:
-        model_df = df[features + [target]].dropna()
-        X, y = model_df[features], model_df[target]
-        model = LinearRegression().fit(X, y)
-
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 42)
-        y_pred = LinearRegression().fit(X_train, y_train).predict(X_test)
-
-        print(f"\n=== {name} ===")
-        print(f"Train R²: {model.score(X, y):.3f}")
-        print(f"Test R²: {r2_score(y_test, y_pred):.3f}")
-        print(f"RMSE: {mean_squared_error(y_test, y_pred)**.5:.2f}")
-        for feat, coef in sorted(zip(features, model.coef_), key = lambda x: abs(x[1]), reverse = True):
-            print(f"{feat}: {coef:.4f}")
 
 # ============================================================================
 # CORRELATION MATRIX
@@ -221,6 +169,8 @@ def plot_correlation_matrix(df):
     plt.tight_layout()
     plt.savefig('ds2500-project/Visualizations/correlation_matrix.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
+
+
 
 
 
@@ -252,7 +202,7 @@ def plot_weight_category_by_race(df):
                   'Other/Multi-racial', 'Mexican American', 'Non-Hispanic Black']
 
     df['Weight_Category'] = pd.cut(df['BMXBMI'], bins = [0, 18.5, 25, 30, np.inf],
-                                   labels = ['Underweight', 'Normal', 'Overweight', 'Obese'])
+                                   labels = ['Underweight (BMI <18.5)', 'Normal(BMI <25)', 'Overweight (BMI <30)', 'Obese (BMI >30)'])
 
     weight_pct = df.groupby('Race', observed = True)['Weight_Category'].value_counts(normalize = True).mul(100).unstack()
     weight_pct = weight_pct.reindex(race_order)
@@ -270,6 +220,54 @@ def plot_weight_category_by_race(df):
     plt.show()
 
 
+
+
+
+def plot_nutrient_intake_by_race(df):
+    race_order = ['Non-Hispanic Asian', 'Other Hispanic', 'Non-Hispanic White',
+                  'Other/Multi-racial', 'Mexican American', 'Non-Hispanic Black']
+
+    nutrients  = ['DR1TKCAL', 'DR1TFIBE', 'DR1TSUGR', 'DR1TSFAT']
+    titles     = ['Average Calorie Intake', 'Average Fiber Intake', 'Average Sugar Intake', 'Average Saturated Fat Intake']
+    xlabels    = ['Calories (kcal)', 'Fiber (g)', 'Sugar (g)', 'Saturated Fat (g)']
+    guidelines = [2000, 25, 50, 20]
+    colors     = ['#49cce3', '#66c94b', '#de5568', '#ffa277']
+
+    fig, axes = plt.subplots(2, 2, figsize = (18, 12))
+
+    for ax, nutrient, title, xlabel, guideline, color in zip(axes.flatten(), nutrients, titles, xlabels, guidelines, colors):
+        means = df.groupby('Race')[nutrient].mean().reindex(race_order)
+        ax.barh(race_order, means.values, color = color, alpha = 0.8, edgecolor = 'black', linewidth = 0.5)
+        ax.axvline(x = guideline, color = 'black', linewidth = 2, linestyle = '--', label = f'Guideline ({guideline})')
+        ax.set_xlabel(xlabel, fontweight = 'bold')
+        ax.set_title(title, fontweight = 'bold')
+        ax.legend(fontsize = 9)
+        ax.grid(axis = 'x', alpha = 0.3)
+
+    plt.suptitle('Nutrient Intake by Race', fontsize = 14, fontweight = 'bold')
+    plt.tight_layout()
+    plt.savefig('ds2500-project/Visualizations/nutrient_intake_by_race.png', dpi = 300, bbox_inches = 'tight')
+    plt.show()
+
+
+
+def plot_bmi_by_calorie_quartile_and_race(df):
+    df['Calorie_Quartile'] = pd.qcut(df['DR1TKCAL'], q = 4, 
+                                      labels = ['Low', 'Medium-Low', 'Medium-High', 'High'])
+    
+    pivot = df.groupby(['Race', 'Calorie_Quartile'], observed = True)['BMXBMI'].mean().unstack()
+    
+    fig, ax = plt.subplots(figsize = (12, 6))
+    pivot.plot(kind = 'bar', ax = ax, colormap = 'coolwarm', alpha = 0.8, edgecolor = 'black', linewidth=0.5)
+    ax.axhline(y = 30, color = 'black', linewidth=2, linestyle = '--', label = 'Obesity threshold')
+    ax.set_xlabel('Race', fontweight = 'bold')
+    ax.set_ylabel('Mean BMI', fontweight = 'bold')
+    ax.set_title('Mean BMI by Race and Calorie Intake Quartile', fontweight = 'bold')
+    ax.legend(title = 'Calorie Quartile')
+    ax.set_xticklabels(ax.get_xticklabels(), rotation = 30, ha = 'right')
+    plt.tight_layout()
+    plt.show()
+
 # ============================================================================
 # MAIN
 # ============================================================================
@@ -284,6 +282,8 @@ def main():
 
     plot_obesity_rate_by_race(df)
     plot_weight_category_by_race(df)
+    plot_nutrient_intake_by_race(df)
+    # plot_bmi_by_calorie_quartile_and_race(df)
 
 if __name__ == '__main__':
     main()
