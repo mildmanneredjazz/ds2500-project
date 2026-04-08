@@ -152,12 +152,58 @@ def plot_bmi_by_calorie_quartile_and_race(df):
     ax.set_xticklabels(ax.get_xticklabels(), rotation = 30, ha = 'right')
     plt.tight_layout()
     plt.show()
+def box_plot_bmi_race(df):
+    race_order = ['Non-Hispanic Asian', 'Other Hispanic', 'Non-Hispanic White',
+                  'Other/Multi-racial', 'Mexican American', 'Non-Hispanic Black']
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.boxplot(data=df, x="BMXBMI", y="Race", order=race_order,
+                palette="Set2", ax=ax)
+    ax.axvline(x=30, color='black', linestyle='--', label='Obesity threshold (BMI 30)')
+    ax.set_xlabel('BMI', fontweight='bold')
+    ax.set_title('BMI Distribution by Race', fontweight='bold')
+    ax.legend(fontsize=9)
+    plt.tight_layout()
+    plt.savefig('ds2500-project/Visualizations/bmi_boxplot_by_race.png', dpi=300, bbox_inches='tight')
+    plt.show()
+    
+def plot_obesity_rate_by_race_and_gender(df):
+    race_order = ['Non-Hispanic Asian', 'Other Hispanic', 'Non-Hispanic White',
+                  'Other/Multi-racial', 'Mexican American', 'Non-Hispanic Black']
+
+    obesity_by_race_gender = df.groupby(['Race', 'Gender'])['Obese'].mean() * 100
+    obesity_by_race_gender = obesity_by_race_gender.unstack()
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    x = np.arange(len(race_order))
+    width = 0.35
+
+    bars_m = ax.barh(x + width/2, obesity_by_race_gender.reindex(race_order)['Male'],
+                     width, label='Male', alpha=0.8, edgecolor='black', linewidth=0.5)
+    bars_f = ax.barh(x - width/2, obesity_by_race_gender.reindex(race_order)['Female'],
+                     width, label='Female', alpha=0.8, edgecolor='black', linewidth=0.5)
+
+    ax.axvline(x=obesity_by_race_gender.values.mean(), color='black', linestyle='--',
+               label=f'Overall average ({obesity_by_race_gender.values.mean():.1f}%)')
+    ax.set_yticks(x)
+    ax.set_yticklabels(race_order)
+    ax.set_xlabel('Obesity Rate (%)', fontweight='bold')
+    ax.set_title('Obesity Rate by Race and Gender', fontweight='bold')
+    ax.legend(fontsize=9)
+    ax.grid(axis='x', alpha=0.3)
+    plt.tight_layout()
+    plt.savefig('ds2500-project/Visualizations/obesity_rate_by_race_gender.png', dpi=300, bbox_inches='tight')
+    plt.show()
+    
 
 def main():
     plot_obesity_rate_by_race(df)
     plot_weight_category_by_race(df)
     plot_nutrient_intake_by_race(df)
+    box_plot_bmi_race(df)
+    plot_obesity_rate_by_race_and_gender(df)
     # plot_bmi_by_calorie_quartile_and_race(df)
+
 
 if __name__ == '__main__':
     main()
