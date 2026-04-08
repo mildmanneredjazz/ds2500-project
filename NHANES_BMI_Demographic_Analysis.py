@@ -75,12 +75,12 @@ def plot_obesity_rate_by_race(df):
     obesity_by_race = obesity_by_race.reindex(race_order)
 
     fig, ax = plt.subplots(figsize = (10, 6))
-    ax.barh(race_order, obesity_by_race.values, alpha = 0.8, edgecolor = 'black', linewidth = 0.5)
+    ax.barh(race_order, obesity_by_race.values, color = "#7694AD", edgecolor = 'black', linewidth = 0.5)
     ax.axvline(x = obesity_by_race.mean(), color = 'black', linestyle = '--', label = f'Average ({obesity_by_race.mean():.1f}%)')
     ax.set_xlabel('Obesity Rate (%)', fontweight = 'bold')
     ax.set_title('Obesity Rate by Race', fontweight = 'bold')
     ax.legend(fontsize = 9)
-    ax.grid(axis = 'x', alpha = 0.3)
+    ax.grid()
     plt.tight_layout()
     plt.savefig('ds2500-project/Visualizations/obesity_rate_by_race.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
@@ -98,12 +98,11 @@ def plot_weight_category_by_race(df):
 
     fig, ax = plt.subplots(figsize = (10, 6))
     weight_pct.plot(kind = 'barh', stacked = True, ax = ax,
-                    color = ["#b8e4ff", "#7080fa", "#563cc6", "#27003F"],
-                    alpha = 0.8, edgecolor = 'black', linewidth = 0.3)
+                    color = ["#2C4459", "#43627C", "#7694AD", "#e68988"],
+                    edgecolor = 'black', linewidth = 0.3)
     ax.set_xlabel('Percentage (%)', fontweight = 'bold')
     ax.set_title('Weight Category Distribution by Race', fontweight = 'bold')
     ax.legend(title = 'Weight Category', bbox_to_anchor = (1.05, 1), loc = 'lower right', fontsize = 9)
-    ax.grid(axis = 'x', alpha = 0.3)
     plt.tight_layout()
     plt.savefig('ds2500-project/Visualizations/weight_category_by_race.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
@@ -117,7 +116,7 @@ def plot_nutrient_intake_by_race(df):
     titles     = ['Average Calorie Intake', 'Average Fiber Intake', 'Average Sugar Intake', 'Average Saturated Fat Intake']
     xlabels    = ['Calories (kcal)', 'Fiber (g)', 'Sugar (g)', 'Saturated Fat (g)']
     guidelines = [2000, 25, 50, 20]
-    colors     = ["#b8e4ff", "#7080fa", "#563cc6", "#27003F"]
+    colors     = ["#2C4459", "#43627C", "#7694AD", "#9AB7CF"]
 
     fig, axes = plt.subplots(2, 2, figsize = (18, 12))
 
@@ -128,7 +127,7 @@ def plot_nutrient_intake_by_race(df):
         ax.set_xlabel(xlabel, fontweight = 'bold')
         ax.set_title(title, fontweight = 'bold')
         ax.legend(fontsize = 9)
-        ax.grid(axis = 'x', alpha = 0.3)
+        ax.grid()
 
     plt.suptitle('Nutrient Intake by Race', fontsize = 14, fontweight = 'bold')
     plt.tight_layout()
@@ -143,7 +142,7 @@ def plot_bmi_by_calorie_quartile_and_race(df):
     pivot = df.groupby(['Race', 'Calorie_Quartile'], observed = True)['BMXBMI'].mean().unstack()
     
     fig, ax = plt.subplots(figsize = (12, 6))
-    pivot.plot(kind = 'bar', ax = ax, colormap = 'coolwarm', alpha = 0.8, edgecolor = 'black', linewidth = 0.5)
+    pivot.plot(kind = 'bar', ax = ax, colormap = 'coolwarm', edgecolor = 'black', linewidth = 0.5)
     ax.axhline(y = 30, color = 'black', linestyle = '--', label = 'Obesity threshold')
     ax.set_xlabel('Race', fontweight = 'bold')
     ax.set_ylabel('Mean BMI', fontweight = 'bold')
@@ -156,15 +155,15 @@ def box_plot_bmi_race(df):
     race_order = ['Non-Hispanic Asian', 'Other Hispanic', 'Non-Hispanic White',
                   'Other/Multi-racial', 'Mexican American', 'Non-Hispanic Black']
 
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.boxplot(data=df, x="BMXBMI", y="Race", order=race_order,
-                palette="Set2", ax=ax)
-    ax.axvline(x=30, color='black', linestyle='--', label='Obesity threshold (BMI 30)')
-    ax.set_xlabel('BMI', fontweight='bold')
-    ax.set_title('BMI Distribution by Race', fontweight='bold')
-    ax.legend(fontsize=9)
+    fig, ax = plt.subplots(figsize = (10, 6))
+    sns.boxplot(data = df, x = "BMXBMI", y = "Race", order = race_order,
+                palette = ["#2C4459", "#43627C", "#7694AD", "#9AB7CF"], ax = ax)
+    ax.axvline(x = 30, color = 'black', linestyle = '--', label = 'Obesity threshold (BMI 30)')
+    ax.set_xlabel('BMI', fontweight = 'bold')
+    ax.set_title('BMI Distribution by Race', fontweight = 'bold')
+    ax.legend(fontsize = 9)
     plt.tight_layout()
-    plt.savefig('ds2500-project/Visualizations/bmi_boxplot_by_race.png', dpi=300, bbox_inches='tight')
+    plt.savefig('ds2500-project/Visualizations/bmi_boxplot_by_race.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
     
 def plot_obesity_rate_by_race_and_gender(df):
@@ -174,25 +173,25 @@ def plot_obesity_rate_by_race_and_gender(df):
     obesity_by_race_gender = df.groupby(['Race', 'Gender'])['Obese'].mean() * 100
     obesity_by_race_gender = obesity_by_race_gender.unstack()
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize = (10, 6))
     x = np.arange(len(race_order))
     width = 0.35
 
     bars_m = ax.barh(x + width/2, obesity_by_race_gender.reindex(race_order)['Male'],
-                     width, label='Male', alpha=0.8, edgecolor='black', linewidth=0.5)
+                     width, label = 'Male', color = "#7694AD", edgecolor = 'black')
     bars_f = ax.barh(x - width/2, obesity_by_race_gender.reindex(race_order)['Female'],
-                     width, label='Female', alpha=0.8, edgecolor='black', linewidth=0.5)
+                     width, label = 'Female', color = "#e68988", edgecolor = 'black')
 
-    ax.axvline(x=obesity_by_race_gender.values.mean(), color='black', linestyle='--',
-               label=f'Overall average ({obesity_by_race_gender.values.mean():.1f}%)')
+    ax.axvline(x = obesity_by_race_gender.values.mean(), color = 'black', linestyle = '--',
+               label = f'Overall average ({obesity_by_race_gender.values.mean():.1f}%)')
     ax.set_yticks(x)
     ax.set_yticklabels(race_order)
-    ax.set_xlabel('Obesity Rate (%)', fontweight='bold')
-    ax.set_title('Obesity Rate by Race and Gender', fontweight='bold')
-    ax.legend(fontsize=9)
-    ax.grid(axis='x', alpha=0.3)
+    ax.set_xlabel('Obesity Rate (%)')
+    ax.set_title('Obesity Rate by Race and Gender')
+    ax.legend(fontsize = 9)
+    ax.grid()
     plt.tight_layout()
-    plt.savefig('ds2500-project/Visualizations/obesity_rate_by_race_gender.png', dpi=300, bbox_inches='tight')
+    plt.savefig('ds2500-project/Visualizations/obesity_rate_by_race_gender.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
     
 
@@ -201,8 +200,8 @@ def main():
     plot_weight_category_by_race(df)
     plot_nutrient_intake_by_race(df)
     box_plot_bmi_race(df)
-    plot_obesity_rate_by_race_and_gender(df)
     # plot_bmi_by_calorie_quartile_and_race(df)
+    plot_obesity_rate_by_race_and_gender(df)
 
 
 if __name__ == '__main__':
