@@ -130,7 +130,9 @@ def plot_bmi_by_calorie_quartile_and_race(df):
     ax.legend(title = 'Calorie Intake Quartile')
     ax.set_xticklabels(ax.get_xticklabels(), rotation = 30, ha = 'right')
     plt.tight_layout()
+    plt.savefig('ds2500-project/Visualizations/bmi_by_calorie_quartile_race.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
+
 def box_plot_bmi_race(df):
     race_order = ['Non-Hispanic Asian', 'Other Hispanic', 'Non-Hispanic White',
                   'Other/Multi-racial', 'Mexican American', 'Non-Hispanic Black']
@@ -176,12 +178,12 @@ def plot_obesity_rate_by_race_and_gender(df):
     
 
 def main():
-    # plot_obesity_rate_by_race(df)
-    # plot_weight_category_by_race(df)
-    # plot_nutrient_intake_by_race(df)
-    # box_plot_bmi_race(df)
+    plot_obesity_rate_by_race(df)
+    plot_weight_category_by_race(df)
+    plot_nutrient_intake_by_race(df)
+    box_plot_bmi_race(df)
     plot_bmi_by_calorie_quartile_and_race(df)
-    # plot_obesity_rate_by_race_and_gender(df)
+    plot_obesity_rate_by_race_and_gender(df)
 
 
 if __name__ == '__main__':
