@@ -1,14 +1,7 @@
-#NOTES FOR LATER:
-#Replace nutrient deficiency rates by poverty bar chart nutrients w/ clinically relevant & correlated variables
-#TODO: focus on race & nutrition/obesity, explore blood pressure?, use K-Means clustering, linear regression
-
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import seaborn as sns
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score, mean_squared_error
 
 sns.set_theme()
 
@@ -17,11 +10,9 @@ sns.set_theme()
 
 demographics_df = pd.read_sas('ds2500-project/NHANES_data/DEMO_L.xpt')
 dietary_df = pd.read_sas('ds2500-project/NHANES_data/DR1TOT_L.xpt')
-cholesterol_df  = pd.read_sas('ds2500-project/NHANES_data/TRIGLY_L.xpt')
-blood_pressure_df = pd.read_sas('ds2500-project/NHANES_data/BPXO_L.xpt')
 body_measures_df = pd.read_sas('ds2500-project/NHANES_data/BMX_L.xpt')
 
-df = demographics_df.merge(dietary_df, on = 'SEQN', how = 'left').merge(cholesterol_df, on = 'SEQN', how = 'left').merge(body_measures_df, on = 'SEQN', how = 'left').merge(blood_pressure_df, on = 'SEQN', how = 'left')
+df = demographics_df.merge(dietary_df, on = 'SEQN', how = 'left').merge(body_measures_df, on = 'SEQN', how = 'left')
 df = df[df['DR1DRSTZ'] == 1] # only reliable dietary recall days have value = 1; drop all else
 
 # add appropriate names to categorical variables
@@ -31,15 +22,9 @@ df['Race'] = df['RIDRETH3'].map(race_mapping)
 
 df['Gender'] = df['RIAGENDR'].map({1: 'Male', 2: 'Female'})
 
-
-
-
-
-
 # CLEANING, PREPROCESSING
 
-for col in ['INDFMPIR', 'DR1TKCAL', 'DR1TPROT', 'DR1TCARB', 'DR1TSUGR',
-            'DR1TFIBE', 'DR1TTFAT', 'DR1TSFAT', 'DR1TCHOL', 'LBDLDLN', 'LBXTLG']:
+for col in ['INDFMPIR', 'DR1TKCAL', 'DR1TFIBE', 'DR1TSUGR', 'DR1TSFAT']:
     if col in df.columns:
         df.loc[df[col] < 0, col] = np.nan
 
@@ -49,8 +34,8 @@ df['Poverty_Category'] = pd.cut(df['INDFMPIR'],
                                 bins = [0, 1, 2, 3, 5],
                                 labels = ['<1.0 (Low)', '1.0-2.0 (Near Low)', '2.0-3.0 (Middle)', '>3.0 (High)'])
 
-# capping extreme values at the 99th percentile to handle outliers
-for col in ['LBXTLG', 'LBDLDLN', 'DR1TSFAT', 'DR1TSUGR', 'DR1TCHOL']:
+# capping extreme nutritient intake values at the 99th percentile to handle outliers
+for col in ['DR1TKCAL', 'DR1TFIBE', 'DR1TSUGR', 'DR1TSFAT']:
     cap = df[col].quantile(0.99)
     df[col] = df[col].clip(upper = cap)
 
