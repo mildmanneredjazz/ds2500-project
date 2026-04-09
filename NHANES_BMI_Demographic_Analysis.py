@@ -24,18 +24,14 @@ df['Gender'] = df['RIAGENDR'].map({1: 'Male', 2: 'Female'})
 
 # CLEANING, PREPROCESSING
 
-for col in ['INDFMPIR', 'DR1TKCAL', 'DR1TFIBE', 'DR1TSUGR', 'DR1TSFAT']:
+for col in ['BMXBMI', 'DR1TKCAL', 'DR1TFIBE', 'DR1TSUGR', 'DR1TSFAT']:
     if col in df.columns:
         df.loc[df[col] < 0, col] = np.nan
 
-df = df.dropna(subset = ['RIDAGEYR', 'RIAGENDR', 'RIDRETH3'])
+df = df.dropna(subset = ['BMXBMI', 'RIDAGEYR', 'RIAGENDR', 'RIDRETH3'])
 
-df['Poverty_Category'] = pd.cut(df['INDFMPIR'], 
-                                bins = [0, 1, 2, 3, 5],
-                                labels = ['<1.0 (Low)', '1.0-2.0 (Near Low)', '2.0-3.0 (Middle)', '>3.0 (High)'])
-
-# capping extreme nutritient intake values at the 99th percentile to handle outliers
-for col in ['DR1TKCAL', 'DR1TFIBE', 'DR1TSUGR', 'DR1TSFAT']:
+# capping extreme BMI and nutritient intake values at the 99th percentile to handle outliers
+for col in ['BMXBMI', 'DR1TKCAL', 'DR1TFIBE', 'DR1TSUGR', 'DR1TSFAT']:
     cap = df[col].quantile(0.99)
     df[col] = df[col].clip(upper = cap)
 
@@ -43,7 +39,6 @@ for col in ['DR1TKCAL', 'DR1TFIBE', 'DR1TSUGR', 'DR1TSFAT']:
 df = df[df['RIDAGEYR'] >= 18]
 
 # assigning binary variables to obesity classification
-df['BMI'] = df['BMXBMI']
 df['Obese'] = (df['BMXBMI'] >= 30).astype(int)  # binary: 1 = obese, 0 = not obese
 
 
@@ -127,12 +122,12 @@ def plot_bmi_by_calorie_quartile_and_race(df):
     pivot = df.groupby(['Race', 'Calorie_Quartile'], observed = True)['BMXBMI'].mean().unstack()
     
     fig, ax = plt.subplots(figsize = (12, 6))
-    pivot.plot(kind = 'bar', ax = ax, colormap = 'coolwarm', edgecolor = 'black', linewidth = 0.5)
+    pivot.plot(kind = 'bar', ax = ax, color = ["#2C4459", "#43627C", "#7694AD", "#e68988"], edgecolor = 'black', linewidth = 0.5)
     ax.axhline(y = 30, color = 'black', linestyle = '--', label = 'Obesity threshold')
     ax.set_xlabel('Race', fontweight = 'bold')
     ax.set_ylabel('Mean BMI', fontweight = 'bold')
     ax.set_title('Mean BMI by Race and Calorie Intake Quartile', fontweight = 'bold')
-    ax.legend(title = 'Calorie Quartile')
+    ax.legend(title = 'Calorie Intake Quartile')
     ax.set_xticklabels(ax.get_xticklabels(), rotation = 30, ha = 'right')
     plt.tight_layout()
     plt.show()
@@ -181,12 +176,12 @@ def plot_obesity_rate_by_race_and_gender(df):
     
 
 def main():
-    plot_obesity_rate_by_race(df)
-    plot_weight_category_by_race(df)
-    plot_nutrient_intake_by_race(df)
-    box_plot_bmi_race(df)
-    # plot_bmi_by_calorie_quartile_and_race(df)
-    plot_obesity_rate_by_race_and_gender(df)
+    # plot_obesity_rate_by_race(df)
+    # plot_weight_category_by_race(df)
+    # plot_nutrient_intake_by_race(df)
+    # box_plot_bmi_race(df)
+    plot_bmi_by_calorie_quartile_and_race(df)
+    # plot_obesity_rate_by_race_and_gender(df)
 
 
 if __name__ == '__main__':
