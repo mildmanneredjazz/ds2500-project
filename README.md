@@ -1,6 +1,6 @@
-# NHANES Blood Lipid & Obesity Analysis
+# NHANES Racial Demographic & Obesity Analysis
 
-An exploratory data analysis of the CDC's National Health and Nutrition Examination Survey (NHANES) 2021–2023 dataset, investigating relationships between race, poverty, dietary intake, and cardiovascular/obesity risk indicators.
+An exploratory data analysis of the CDC's National Health and Nutrition Examination Survey (NHANES) 2021–2023 dataset, investigating relationships between race, dietary intake, and supplemental exploration into gender and nutritional disparities.
 
 ---
 
