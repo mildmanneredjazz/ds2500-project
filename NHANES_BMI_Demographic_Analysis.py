@@ -6,11 +6,17 @@ import seaborn as sns
 sns.set_theme()
 
 
-# LOAD & MERGE
+# LOAD & MERGE DATA
 
-demographics_df = pd.read_sas('ds2500-project/NHANES_data/DEMO_L.xpt')
-dietary_df = pd.read_sas('ds2500-project/NHANES_data/DR1TOT_L.xpt')
-body_measures_df = pd.read_sas('ds2500-project/NHANES_data/BMX_L.xpt')
+# ORIGINAL DATASETS: IGNORE FOR SUBMISSION
+# demographics_df = pd.read_sas('ds2500-project/NHANES_data/DEMO_L.xpt')
+# dietary_df = pd.read_sas('ds2500-project/NHANES_data/DR1TOT_L.xpt')
+# body_measures_df = pd.read_sas('ds2500-project/NHANES_data/BMX_L.xpt')
+
+# REDUCED DATASETS
+demographics_df  = pd.read_csv('ds2500-project/NHANES_data/DEMO_L_reduced.csv')
+dietary_df       = pd.read_csv('ds2500-project/NHANES_data/DR1TOT_L_reduced.csv')
+body_measures_df = pd.read_csv('ds2500-project/NHANES_data/BMX_L_reduced.csv')
 
 df = demographics_df.merge(dietary_df, on = 'SEQN', how = 'left').merge(body_measures_df, on = 'SEQN', how = 'left')
 df = df[df['DR1DRSTZ'] == 1] # only reliable dietary recall days have value = 1; drop all else
@@ -177,14 +183,30 @@ def plot_obesity_rate_by_race_and_gender(df):
     plt.show()
     
 
+
+
+
+
+
+
+# FOR REDUCING DATASET TO 1000 ROWS FOR ASSIGNMENT SUBMISSION
+def save_reduced_datasets():
+    demographics_df.sample(1000).to_csv('ds2500-project/NHANES_data/DEMO_L_reduced.csv', index = False)
+    dietary_df.sample(1000).to_csv('ds2500-project/NHANES_data/DR1TOT_L_reduced.csv', index = False)
+    body_measures_df.sample(1000).to_csv('ds2500-project/NHANES_data/BMX_L_reduced.csv', index = False)
+    print("Reduced datasets saved")
+
+
+
+
 def main():
-    plot_obesity_rate_by_race(df)
+    # plot_obesity_rate_by_race(df) # not used in final presentation
     plot_weight_category_by_race(df)
     plot_nutrient_intake_by_race(df)
-    box_plot_bmi_race(df)
+    # box_plot_bmi_race(df) # not used in final presentation
     plot_bmi_by_calorie_quartile_and_race(df)
     plot_obesity_rate_by_race_and_gender(df)
-
+    # save_reduced_datasets()
 
 if __name__ == '__main__':
     main()
